@@ -9,6 +9,39 @@ using namespace std;
 
 int V = 4;
 
+vector<int> bellmanFord(vector<vector<int>> graph, int src, int V)
+{
+    vector<int> dist(V);
+    for (int i = 0; i < V; i++)
+        dist[i] = INT_MAX;
+
+    dist[src] = 0;
+    for (int k = 0; k < V - 1; k++) {
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                if (graph[i][j] == 0)
+                    continue;
+
+                if (dist[i] != INT_MAX && dist[i] + graph[i][j] < dist[j])
+                    dist[j] = dist[i] + graph[i][j];
+            }
+        }
+    }
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (graph[i][j] == 0)
+                continue;
+            
+            if (dist[i] != INT_MAX && dist[i] + graph[i][j] < dist[j])
+                cout << "Graph contains negative weight cycle" << endl;
+           
+        }
+    }
+    
+    return dist;
+}
+
+
 int minDistance(vector<int> dist, vector<bool> sptSet)
 {
     int min = INT_MAX, min_index;
@@ -107,9 +140,9 @@ void lsrp(vector<vector<int>> graph, int src)
 int main()
 {
     vector<vector<int>> graph; /*{{0, 19, 9, 0},
-                        { 19, 0, 4, 3 },
-                        { 9, 4, 0, 18 },
-                        { 0, 3, 18, 0 } };*/
+                                  { 19, 0, 4, 3 },
+                                  { 9, 4, 0, 18 },
+                                  { 0, 3, 18, 0 } };*/
 
     vector<int> row1;
     row1.push_back(0);
@@ -139,7 +172,11 @@ int main()
     row4.push_back(0);
     graph.push_back(row4);
 
-    lsrp(graph, 0);
-
+    //lsrp(graph, 0);
+    vector<int> distance = bellmanFord(graph, 2, 4);
+    cout << "Vertex Distance from Source" << endl;
+    for (int i = 0; i < distance.size(); i++)
+        cout << i << "\t\t" << distance[i] << endl;
+   
     return 0;
 }

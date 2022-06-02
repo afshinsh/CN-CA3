@@ -33,10 +33,10 @@ string createPath(vector<vector<int>> paths, int src, int dest) {
     string result = "";
     
     for (int i = 0; i < paths[dest].size(); i++) {
-        result += to_string(paths[dest][i]) + "->";
+        result += to_string(paths[dest][i] + 1) + "->";
     }
 
-    result += to_string(dest);
+    result += to_string(dest + 1);
     return result;
 }
 
@@ -47,7 +47,8 @@ void printResult(vector<int> dist, vector<vector<int>> paths, int src) {
         if (i == src)
             continue;
         string path = createPath(paths, src, i);
-        printf("       [%d]->[%d]     %d     %s\n", src + 1, i + 1, dist[i], path);
+        printf("       [%d]->[%d]     %d     ", src + 1, i + 1, dist[i]);
+        cout << path << endl;
 
     }
 }

@@ -3,9 +3,18 @@
 #include <iostream>
 #include <vector>
 #include<string>  
+#include <sstream>  
 
 
 using namespace std;
+
+string TOPOLOGY_CMD = "topology";
+const string SHOW_CMD = "show";
+const string LSRP_CMD = "lsrp";
+const string DVRP_CMD = "dvrp";
+const string MODIFY_CMD = "modify";
+const string REMOVE_CMD = "remove";
+
 
 int V = 4;
 
@@ -137,46 +146,92 @@ void lsrp(vector<vector<int>> graph, int src)
 
 }
 
+
+void split_str(string const& str, const char delim,
+    vector <string>& out)
+{
+    stringstream s(str);
+
+    string s2;
+    while (getline(s, s2, delim))
+    {
+        if (s2 == "")
+            continue;
+        out.push_back(s2); 
+    }
+}
+
 int main()
 {
     vector<vector<int>> graph; /*{{0, 19, 9, 0},
-                                  { 19, 0, 4, 3 },
-                                  { 9, 4, 0, 18 },
-                                  { 0, 3, 18, 0 } };*/
+    //                              { 19, 0, 4, 3 },
+    //                              { 9, 4, 0, 18 },
+    //                              { 0, 3, 18, 0 } };*/
 
-    vector<int> row1;
-    row1.push_back(0);
-    row1.push_back(19);
-    row1.push_back(9);
-    row1.push_back(0);
-    graph.push_back(row1);
+    //vector<int> row1;
+    //row1.push_back(0);
+    //row1.push_back(19);
+    //row1.push_back(9);
+    //row1.push_back(0);
+    //graph.push_back(row1);
 
-    vector<int> row2;
-    row2.push_back(19);
-    row2.push_back(0);
-    row2.push_back(4);
-    row2.push_back(3);
-    graph.push_back(row2);
+    //vector<int> row2;
+    //row2.push_back(19);
+    //row2.push_back(0);
+    //row2.push_back(4);
+    //row2.push_back(3);
+    //graph.push_back(row2);
 
-    vector<int> row3;
-    row3.push_back(9);
-    row3.push_back(4);
-    row3.push_back(0);
-    row3.push_back(18);
-    graph.push_back(row3);
+    //vector<int> row3;
+    //row3.push_back(9);
+    //row3.push_back(4);
+    //row3.push_back(0);
+    //row3.push_back(18);
+    //graph.push_back(row3);
 
-    vector<int> row4;
-    row4.push_back(0);
-    row4.push_back(3);
-    row4.push_back(18);
-    row4.push_back(0);
-    graph.push_back(row4);
+    //vector<int> row4;
+    //row4.push_back(0);
+    //row4.push_back(3);
+    //row4.push_back(18);
+    //row4.push_back(0);
+    //graph.push_back(row4);
 
     //lsrp(graph, 0);
-    vector<int> distance = bellmanFord(graph, 2, 4);
-    cout << "Vertex Distance from Source" << endl;
-    for (int i = 0; i < distance.size(); i++)
-        cout << i << "\t\t" << distance[i] << endl;
+    //vector<int> distance = bellmanFord(graph, 2, 4);
+    //cout << "Vertex Distance from Source" << endl;
+    //for (int i = 0; i < distance.size(); i++)
+    //    cout << i << "\t\t" << distance[i] << endl;
    
+    string cmd;
+    while (getline(cin, cmd)) {
+        
+
+        vector <string> out;  
+        split_str(cmd, ' ', out);
+         
+        if (out[0] == TOPOLOGY_CMD) {
+
+        }
+        else if (out[0] == SHOW_CMD) {
+
+        }
+        else if (out[0] == MODIFY_CMD) {
+
+        }
+        else if (out[0] == REMOVE_CMD) {
+
+        }
+        else if (out[0] == LSRP_CMD) {
+
+        }
+        else if (out[0] == DVRP_CMD) {
+
+        }
+        else {
+            cout << "Command Not Found!" << endl;
+        }
+
+
+    }
     return 0;
 }

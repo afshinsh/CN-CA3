@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include<string>  
+
 
 using namespace std;
 
@@ -18,7 +20,40 @@ int minDistance(vector<int> dist, vector<bool> sptSet)
     return min_index;
 }
 
-void printSolution(vector<int> dist, int n)
+string createPath(vector<vector<int>> paths, int src, int dest) {
+    
+    if (paths[dest][0] != src)
+        while (paths[dest][0] != src)
+        {
+            vector<int> tempPath = paths[paths[dest][0]];
+            for (int i = tempPath.size() - 1; i >= 0; i--)
+                paths[dest].insert(paths[dest].begin(), tempPath[i]);
+        }
+
+    string result = "";
+    
+    for (int i = 0; i < paths[dest].size(); i++) {
+        result += to_string(paths[dest][i]) + "->";
+    }
+
+    result += to_string(dest);
+    return result;
+}
+
+void printResult(vector<int> dist, vector<vector<int>> paths, int src) {
+    printf("Paths: [s]->[d]  Min-Cost  Shortest Path\n");
+    printf("       --------  --------  -------------\n");
+    for (int i = 0; i < V; i++) {
+        if (i == src)
+            continue;
+        string path = createPath(paths, src, i);
+        printf("       [%d]->[%d]     %d     %s\n", src + 1, i + 1, dist[i], path);
+
+    }
+}
+
+
+void printIteration(vector<int> dist, int n)
 {
     printf("Dest\t| ");
     for (int i = 0; i < V; i++)
@@ -31,7 +66,7 @@ void printSolution(vector<int> dist, int n)
 }
 
 
-void dijkstra(vector<vector<int>> graph, int src)
+void lsrp(vector<vector<int>> graph, int src)
 {
     vector<int> dist; 
     vector<vector<int>> paths;
@@ -58,11 +93,13 @@ void dijkstra(vector<vector<int>> graph, int src)
             }
 
         cout << "\titer " << iterCount << ":\n";
-        printSolution(dist, V);
-        cout << "---------------------------" << endl;
+        printIteration(dist, V);
+        cout << "---------------------------" << endl << endl;
         iterCount++;
 
     }
+
+    printResult(dist, paths, src);
 
 }
 
@@ -101,7 +138,7 @@ int main()
     row4.push_back(0);
     graph.push_back(row4);
 
-    dijkstra(graph, 0);
+    lsrp(graph, 0);
 
     return 0;
 }

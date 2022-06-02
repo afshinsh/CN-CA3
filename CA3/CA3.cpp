@@ -5,9 +5,9 @@
 
 using namespace std;
 
-#define V 4
+int V = 4;
 
-int minDistance(int dist[], bool sptSet[])
+int minDistance(vector<int> dist, vector<bool> sptSet)
 {
     int min = INT_MAX, min_index;
 
@@ -18,22 +18,26 @@ int minDistance(int dist[], bool sptSet[])
     return min_index;
 }
 
-int printSolution(int dist[], int n)
+void printSolution(vector<int> dist, int n)
 {
-    printf("Vertex   Distance from Source\n");
+    printf("Dest\t| ");
     for (int i = 0; i < V; i++)
-        printf("%d \t\t %d\n", i, dist[i] == INT_MAX ? -1: dist[i]);
-    return 0;
+        printf(" %d |", i + 1);
+    printf("\n");
+    printf("Cost\t| ");
+    for(int i = 0; i < V; i++)
+        printf(" %d |", dist[i] == INT_MAX ? -1: dist[i]);
+    printf("\n");
 }
 
 
-void dijkstra(int graph[V][V], int src)
+void dijkstra(vector<vector<int>> graph, int src)
 {
-    int dist[V]; 
+    vector<int> dist; 
     vector<vector<int>> paths;
-    bool sptSet[V]; 
+    vector<bool> sptSet; 
     for (int i = 0; i < V; i++) {
-        dist[i] = INT_MAX, sptSet[i] = false;
+        dist.push_back(INT_MAX), sptSet.push_back(false);
         vector<int> vertices;
         paths.push_back(vertices);
     }
@@ -50,9 +54,10 @@ void dijkstra(int graph[V][V], int src)
             if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX
                 && dist[u] + graph[u][v] < dist[v]) {
                 dist[v] = dist[u] + graph[u][v];
-                paths[]
+                paths[v].push_back(u);
             }
-        cout << "iter " << iterCount << ":\n";
+
+        cout << "\titer " << iterCount << ":\n";
         printSolution(dist, V);
         cout << "---------------------------" << endl;
         iterCount++;
@@ -63,10 +68,38 @@ void dijkstra(int graph[V][V], int src)
 
 int main()
 {
-    int graph[V][V] = { { 0, 19, 9, 0 },
-                        { 19, 0, 8, 3 },
-                        { 9, 0, 0, 0 },
-                        { 0, 3, 0, 0 } };
+    vector<vector<int>> graph; /*{{0, 19, 9, 0},
+                        { 19, 0, 4, 3 },
+                        { 9, 4, 0, 18 },
+                        { 0, 3, 18, 0 } };*/
+
+    vector<int> row1;
+    row1.push_back(0);
+    row1.push_back(19);
+    row1.push_back(9);
+    row1.push_back(0);
+    graph.push_back(row1);
+
+    vector<int> row2;
+    row2.push_back(19);
+    row2.push_back(0);
+    row2.push_back(4);
+    row2.push_back(3);
+    graph.push_back(row2);
+
+    vector<int> row3;
+    row3.push_back(9);
+    row3.push_back(4);
+    row3.push_back(0);
+    row3.push_back(18);
+    graph.push_back(row3);
+
+    vector<int> row4;
+    row4.push_back(0);
+    row4.push_back(3);
+    row4.push_back(18);
+    row4.push_back(0);
+    graph.push_back(row4);
 
     dijkstra(graph, 0);
 

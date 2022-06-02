@@ -8,7 +8,7 @@
 
 using namespace std;
 
-string TOPOLOGY_CMD = "topology";
+const string TOPOLOGY_CMD = "topology";
 const string SHOW_CMD = "show";
 const string LSRP_CMD = "lsrp";
 const string DVRP_CMD = "dvrp";

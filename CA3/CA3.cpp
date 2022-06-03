@@ -161,6 +161,62 @@ void split_str(string const& str, const char delim,
     }
 }
 
+
+struct Edge {
+    int src;
+    int dest;
+    int cost;
+};
+
+vector<Edge> ParseEdges(vector<string> edges) {
+    vector<Edge> parsedEdges;
+    for (int i = 1; i < edges.size(); i++) {
+        vector <string> out;
+        split_str(edges[i], '-', out);
+        Edge edge;
+        edge.src = stoi(out[0]);
+        edge.dest = stoi(out[1]);
+        edge.cost = stoi(out[2]);
+        parsedEdges.push_back(edge);
+    }
+
+    return parsedEdges;
+}
+
+int SetV(vector<Edge> edges) {
+    int maxSrc = INT_MIN;
+    int maxDest = INT_MIN;
+
+    for (int i = 0; i < edges.size(); i++) {
+        if (edges[i].src > maxSrc)
+            maxSrc = edges[i].src;
+        if (edges[i].dest > maxDest)
+            maxDest = edges[i].dest;
+    }
+
+    return max(maxSrc, maxDest);
+}
+
+
+vector<vector<int>> CreateGraph(vector<Edge> edges) {
+    vector<vector<int>> graph;
+    for (int i = 0;i < V; i++) {
+        vector<int> row;
+        for (int j = 0; j < V; j++)
+            row.push_back(0);
+        graph.push_back(row);
+    }
+
+    for (int i = 0; i < edges.size(); i++) {
+        Edge edge = edges[i];
+        graph[edge.src - 1][edge.dest - 1] = edge.cost;
+        graph[edge.dest - 1][edge.src - 1] = edge.cost;
+    }
+
+    return graph;
+}
+
+
 int main()
 {
     vector<vector<int>> graph; /*{{0, 19, 9, 0},
@@ -210,7 +266,9 @@ int main()
         split_str(cmd, ' ', out);
          
         if (out[0] == TOPOLOGY_CMD) {
-
+            vector<Edge> edges = ParseEdges(out);
+            V = SetV(edges);
+            graph = CreateGraph(edges);
         }
         else if (out[0] == SHOW_CMD) {
 
@@ -233,5 +291,6 @@ int main()
 
 
     }
+
     return 0;
 }

@@ -217,6 +217,29 @@ vector<vector<int>> CreateGraph(vector<Edge> edges) {
 }
 
 
+void showGraph(vector<vector<int>> graph) {
+    printf("u|v |  ");
+    for (int i = 0; i < V; i++)
+        printf("%d  ", i + 1);
+    cout << endl << endl;;
+    for (int i = 0; i <= V; i++)
+        printf("----");
+    cout << endl << endl;;
+    for (int i = 0; i < graph.size(); i++) {
+        printf("%d  |  ", i + 1);
+        for (int j = 0; j < graph[i].size(); j++) {
+            if (i == j)
+                printf("0  ");
+            else
+                printf("%d  ", graph[i][j] == 0 ? -1 : graph[i][j]);
+
+        }
+        cout << endl << endl;
+        
+    }
+
+}
+
 int main()
 {
     vector<vector<int>> graph; /*{{0, 19, 9, 0},
@@ -262,27 +285,28 @@ int main()
     while (getline(cin, cmd)) {
         
 
-        vector <string> out;  
-        split_str(cmd, ' ', out);
+        vector <string> words;  
+        split_str(cmd, ' ', words);
          
-        if (out[0] == TOPOLOGY_CMD) {
-            vector<Edge> edges = ParseEdges(out);
+        if (words[0] == TOPOLOGY_CMD) {
+            vector<Edge> edges = ParseEdges(words);
             V = SetV(edges);
             graph = CreateGraph(edges);
         }
-        else if (out[0] == SHOW_CMD) {
+        else if (words[0] == SHOW_CMD) {
+
+            showGraph(graph);
+        }
+        else if (words[0] == MODIFY_CMD) {
 
         }
-        else if (out[0] == MODIFY_CMD) {
+        else if (words[0] == REMOVE_CMD) {
 
         }
-        else if (out[0] == REMOVE_CMD) {
+        else if (words[0] == LSRP_CMD) {
 
         }
-        else if (out[0] == LSRP_CMD) {
-
-        }
-        else if (out[0] == DVRP_CMD) {
+        else if (words[0] == DVRP_CMD) {
 
         }
         else {

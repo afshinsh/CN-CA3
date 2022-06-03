@@ -16,8 +16,8 @@ const string MODIFY_CMD = "modify";
 const string REMOVE_CMD = "remove";
 
 
-int V = 4;
-
+int V;
+bool TopologyCreated = false;
 vector<int> bellmanFord(vector<vector<int>> graph, int src, int V)
 {
     vector<int> dist(V);
@@ -177,6 +177,8 @@ vector<Edge> ParseEdges(vector<string> edges) {
         edge.src = stoi(out[0]);
         edge.dest = stoi(out[1]);
         edge.cost = stoi(out[2]);
+        if (edge.src == edge.dest)
+            throw exception("Same Source and Destination");
         parsedEdges.push_back(edge);
     }
 
@@ -213,6 +215,8 @@ vector<vector<int>> CreateGraph(vector<Edge> edges) {
         graph[edge.dest - 1][edge.src - 1] = edge.cost;
     }
 
+
+
     return graph;
 }
 
@@ -237,6 +241,31 @@ void showGraph(vector<vector<int>> graph) {
         cout << endl << endl;
         
     }
+
+}
+vector<vector<int>> CreateTopology(vector<string> words) {
+
+    if (TopologyCreated)
+        throw("topology already created!");
+
+    vector<Edge> edges = ParseEdges(words);
+    V = SetV(edges);
+    vector<vector<int>> graph = CreateGraph(edges);
+    TopologyCreated = true;
+    return graph;
+}
+
+void executeLSRP(vector<vector<int>> graph, vector<string> words) {
+
+    if (words.size() > 1)
+        lsrp(graph, stoi(words[1]) - 1);
+    else
+        for (int i = 0; i < V; i++) {
+            printf("\t --------------from src %d ---------------\n\n", i + 1);
+            lsrp(graph, i);
+            printf("------------------------------------------------------------------\n\n");
+
+        }
 
 }
 
@@ -284,34 +313,37 @@ int main()
     string cmd;
     while (getline(cin, cmd)) {
         
+        try {
+            vector <string> words;
+            split_str(cmd, ' ', words);
 
-        vector <string> words;  
-        split_str(cmd, ' ', words);
-         
-        if (words[0] == TOPOLOGY_CMD) {
-            vector<Edge> edges = ParseEdges(words);
-            V = SetV(edges);
-            graph = CreateGraph(edges);
-        }
-        else if (words[0] == SHOW_CMD) {
+            if (words[0] == TOPOLOGY_CMD) {
+                graph = CreateTopology(words);
+            }
+            else if (words[0] == SHOW_CMD) {
 
-            showGraph(graph);
-        }
-        else if (words[0] == MODIFY_CMD) {
+                showGraph(graph);
+            }
+            else if (words[0] == MODIFY_CMD) {
 
-        }
-        else if (words[0] == REMOVE_CMD) {
+            }
+            else if (words[0] == REMOVE_CMD) {
 
-        }
-        else if (words[0] == LSRP_CMD) {
+            }
+            else if (words[0] == LSRP_CMD) {
+                executeLSRP(graph, words);
+            }
+            else if (words[0] == DVRP_CMD) {
 
+            }
+            else {
+                cout << "Command Not Found!" << endl;
+            }
         }
-        else if (words[0] == DVRP_CMD) {
-
+        catch (string exeption) {
+            cout << exeption << endl;
         }
-        else {
-            cout << "Command Not Found!" << endl;
-        }
+        
 
 
     }

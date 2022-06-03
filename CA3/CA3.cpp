@@ -42,6 +42,9 @@ void removeEdge(vector<vector<int>>& graph, vector<string> words) {
         throw string("Error: Same Source and Destination");
     int u = stoi(out[0]) - 1;
     int v = stoi(out[1]) - 1;
+    if (u >= graph.size() || v >= graph.size())
+        throw string("Error: Index out of range");
+
     graph[u][v] = 0;
     graph[v][u] = 0;
 }
@@ -53,8 +56,12 @@ void modifyGraph(vector<vector<int>>& graph, vector<string> words) {
     split_str(words[1], '-', out);
     if (out[0] == out[1])
         throw string("Error: Same Source and Destination");
+    
     int u = stoi(out[0]) - 1;
     int v = stoi(out[1]) - 1;
+    if (u >= graph.size() || v >= graph.size())
+        throw string("Error: Index out of range");
+
     graph[u][v] = stoi(out[2]);
     graph[v][u] = stoi(out[2]);
 }
@@ -130,15 +137,19 @@ void dvrp(vector<vector<int>> graph, int src)
 }
 
 void executeDVRP(vector<vector<int>> graph, vector<string> words) {
+
+    auto start = high_resolution_clock::now();
     int src;
     if (words.size() > 1)
         dvrp(graph, stoi(words[1]) - 1);
     else
         for (int i = 0; i < graph.size(); i++)
             dvrp(graph, i);
+    auto stop = high_resolution_clock::now();
 
-
-
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: "
+        << duration.count() << " microseconds" << endl;
 }
 
 
@@ -370,45 +381,7 @@ int getCommand(string& cmd) {
 
 int main()
 {
-    vector<vector<int>> graph; /*{{0, 19, 9, 0},
-    //                              { 19, 0, 4, 3 },
-    //                              { 9, 4, 0, 18 },
-    //                              { 0, 3, 18, 0 } };*/
-
-    //vector<int> row1;
-    //row1.push_back(0);
-    //row1.push_back(19);
-    //row1.push_back(9);
-    //row1.push_back(0);
-    //graph.push_back(row1);
-
-    //vector<int> row2;
-    //row2.push_back(19);
-    //row2.push_back(0);
-    //row2.push_back(4);
-    //row2.push_back(3);
-    //graph.push_back(row2);
-
-    //vector<int> row3;
-    //row3.push_back(9);
-    //row3.push_back(4);
-    //row3.push_back(0);
-    //row3.push_back(18);
-    //graph.push_back(row3);
-
-    //vector<int> row4;
-    //row4.push_back(0);
-    //row4.push_back(3);
-    //row4.push_back(18);
-    //row4.push_back(0);
-    //graph.push_back(row4);
-
-    //lsrp(graph, 0);
-    //vector<int> distance = bellmanFord(graph, 2, 4);
-    //cout << "Vertex Distance from Source" << endl;
-    //for (int i = 0; i < distance.size(); i++)
-    //    cout << i << "\t\t" << distance[i] << endl;
-   
+    vector<vector<int>> graph; 
     string cmd;
     while (getCommand(cmd)) {
         
@@ -439,9 +412,6 @@ int main()
         catch (string exeption) {
             cout << exeption << endl;
         }
-        
-
-
     }
 
     return 0;

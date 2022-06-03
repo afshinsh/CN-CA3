@@ -19,12 +19,59 @@ const string MODIFY_CMD = "modify";
 const string REMOVE_CMD = "remove";
 const string EXIT = "exit";
 
-
-int V;
-bool TopologyCreated = false;
-vector<int> bellmanFord(vector<vector<int>> graph, int src, int V)
+void split_str(string const& str, const char delim,
+    vector <string>& out)
 {
+    stringstream s(str);
+
+    string s2;
+    while (getline(s, s2, delim))
+    {
+        if (s2 == "")
+            continue;
+        out.push_back(s2);
+    }
+}
+
+void removeEdge(vector<vector<int>>& graph, vector<string> words) {
+    if(words.size() < 1)
+        throw string("Error: Bad Input");
+    vector <string> out;
+    split_str(words[1], '-', out);
+    if (out[0] == out[1])
+        throw string("Error: Same Source and Destination");
+    int u = stoi(out[0]) - 1;
+    int v = stoi(out[1]) - 1;
+    if (u >= graph.size() || v >= graph.size())
+        throw string("Error: Index out of range");
+
+    graph[u][v] = 0;
+    graph[v][u] = 0;
+}
+
+void modifyGraph(vector<vector<int>>& graph, vector<string> words) {
+    if (words.size() < 1)
+        throw string("Error: Bad Input");
+    vector <string> out;
+    split_str(words[1], '-', out);
+    if (out[0] == out[1])
+        throw string("Error: Same Source and Destination");
+    
+    int u = stoi(out[0]) - 1;
+    int v = stoi(out[1]) - 1;
+    if (u >= graph.size() || v >= graph.size())
+        throw string("Error: Index out of range");
+
+    graph[u][v] = stoi(out[2]);
+    graph[v][u] = stoi(out[2]);
+}
+
+
+void dvrp(vector<vector<int>> graph, int src)
+{
+    int V = graph.size();
     vector<int> dist(V);
+    vector<int> parent(V);
     for (int i = 0; i < V; i++)
         dist[i] = INT_MAX;
 
@@ -35,8 +82,10 @@ vector<int> bellmanFord(vector<vector<int>> graph, int src, int V)
                 if (graph[i][j] == 0)
                     continue;
 
-                if (dist[i] != INT_MAX && dist[i] + graph[i][j] < dist[j])
+                if (dist[i] != INT_MAX && dist[i] + graph[i][j] < dist[j]) {
                     dist[j] = dist[i] + graph[i][j];
+                    parent[j] = i;
+                }
             }
         }
     }
@@ -44,15 +93,68 @@ vector<int> bellmanFord(vector<vector<int>> graph, int src, int V)
         for (int j = 0; j < V; j++) {
             if (graph[i][j] == 0)
                 continue;
-            
+
             if (dist[i] != INT_MAX && dist[i] + graph[i][j] < dist[j])
                 cout << "Graph contains negative weight cycle" << endl;
-           
+
         }
     }
     
-    return dist;
+
+
+    cout << "-------------------------from src " << (src + 1) << " -------------------------" << endl;
+    cout << "Dest\tNext Hop\t Dist\tShortest Path" << endl;
+    cout << "-------------------------------------------------" << endl;
+
+    vector<int> path;
+    for (int i = 0; i < V; i++) {
+        int temp = i;
+        
+        while (temp != src) {
+            path.push_back(temp);
+            temp = parent[temp];
+        }
+        path.push_back(src);
+        cout << i + 1 << "\t";
+        if (path.size() > 1)
+            cout << path[path.size() - 2] + 1;
+        else
+            cout << src+1;
+        
+        cout << "\t\t" << dist[i] << "\t" << "[";
+        for (int j = path.size() -1 ; j >= 0; j--) {
+            cout << path[j] + 1;
+            if (j != 0)
+                cout << " --> ";
+        }
+        cout << "]" << endl;
+        path.clear();
+    }
+    cout << endl;
+
+
+
 }
+
+void executeDVRP(vector<vector<int>> graph, vector<string> words) {
+
+    auto start = high_resolution_clock::now();
+    int src;
+    if (words.size() > 1)
+        dvrp(graph, stoi(words[1]) - 1);
+    else
+        for (int i = 0; i < graph.size(); i++)
+            dvrp(graph, i);
+    auto stop = high_resolution_clock::now();
+
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: "
+        << duration.count() << " microseconds" << endl;
+}
+
+
+int V;
+bool TopologyCreated = false;
 
 
 int minDistance(vector<int> dist, vector<bool> sptSet)
@@ -148,21 +250,6 @@ void lsrp(vector<vector<int>> graph, int src)
 
     printResult(dist, paths, src);
 
-}
-
-
-void split_str(string const& str, const char delim,
-    vector <string>& out)
-{
-    stringstream s(str);
-
-    string s2;
-    while (getline(s, s2, delim))
-    {
-        if (s2 == "")
-            continue;
-        out.push_back(s2); 
-    }
 }
 
 
@@ -294,45 +381,7 @@ int getCommand(string& cmd) {
 
 int main()
 {
-    vector<vector<int>> graph; /*{{0, 19, 9, 0},
-    //                              { 19, 0, 4, 3 },
-    //                              { 9, 4, 0, 18 },
-    //                              { 0, 3, 18, 0 } };*/
-
-    //vector<int> row1;
-    //row1.push_back(0);
-    //row1.push_back(19);
-    //row1.push_back(9);
-    //row1.push_back(0);
-    //graph.push_back(row1);
-
-    //vector<int> row2;
-    //row2.push_back(19);
-    //row2.push_back(0);
-    //row2.push_back(4);
-    //row2.push_back(3);
-    //graph.push_back(row2);
-
-    //vector<int> row3;
-    //row3.push_back(9);
-    //row3.push_back(4);
-    //row3.push_back(0);
-    //row3.push_back(18);
-    //graph.push_back(row3);
-
-    //vector<int> row4;
-    //row4.push_back(0);
-    //row4.push_back(3);
-    //row4.push_back(18);
-    //row4.push_back(0);
-    //graph.push_back(row4);
-
-    //lsrp(graph, 0);
-    //vector<int> distance = bellmanFord(graph, 2, 4);
-    //cout << "Vertex Distance from Source" << endl;
-    //for (int i = 0; i < distance.size(); i++)
-    //    cout << i << "\t\t" << distance[i] << endl;
-   
+    vector<vector<int>> graph; 
     string cmd;
     while (getCommand(cmd)) {
         
@@ -345,15 +394,15 @@ int main()
             else if (words[0] == SHOW_CMD)
                 showGraph(graph);
             else if (words[0] == MODIFY_CMD) {
-
+                modifyGraph(graph, words);
             }
             else if (words[0] == REMOVE_CMD) {
-
+                removeEdge(graph, words);
             }
             else if (words[0] == LSRP_CMD)
                 executeLSRP(graph, words);
             else if (words[0] == DVRP_CMD) {
-
+                executeDVRP(graph, words);
             }
             else if (words[0] == EXIT)
                 break;
@@ -363,9 +412,6 @@ int main()
         catch (string exeption) {
             cout << exeption << endl;
         }
-        
-
-
     }
 
     return 0;

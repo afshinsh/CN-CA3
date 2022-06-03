@@ -14,6 +14,7 @@ const string LSRP_CMD = "lsrp";
 const string DVRP_CMD = "dvrp";
 const string MODIFY_CMD = "modify";
 const string REMOVE_CMD = "remove";
+const string EXIT = "exit";
 
 
 int V;
@@ -178,7 +179,7 @@ vector<Edge> ParseEdges(vector<string> edges) {
         edge.dest = stoi(out[1]);
         edge.cost = stoi(out[2]);
         if (edge.src == edge.dest)
-            throw exception("Same Source and Destination");
+            throw string("Same Source and Destination");
         parsedEdges.push_back(edge);
     }
 
@@ -222,6 +223,8 @@ vector<vector<int>> CreateGraph(vector<Edge> edges) {
 
 
 void showGraph(vector<vector<int>> graph) {
+    if (!TopologyCreated)
+        throw string("Topology is not created");
     printf("u|v |  ");
     for (int i = 0; i < V; i++)
         printf("%d  ", i + 1);
@@ -246,12 +249,13 @@ void showGraph(vector<vector<int>> graph) {
 vector<vector<int>> CreateTopology(vector<string> words) {
 
     if (TopologyCreated)
-        throw("topology already created!");
+        throw string("topology already created!");
 
     vector<Edge> edges = ParseEdges(words);
     V = SetV(edges);
     vector<vector<int>> graph = CreateGraph(edges);
     TopologyCreated = true;
+    cout << "Topology created successfully!" << endl;
     return graph;
 }
 
@@ -267,6 +271,12 @@ void executeLSRP(vector<vector<int>> graph, vector<string> words) {
 
         }
 
+}
+
+int getCommand(string& cmd) {
+    cout << "Enter Your Command : ";
+    getline(cin, cmd);
+    return 1;
 }
 
 int main()
@@ -311,34 +321,31 @@ int main()
     //    cout << i << "\t\t" << distance[i] << endl;
    
     string cmd;
-    while (getline(cin, cmd)) {
+    while (getCommand(cmd)) {
         
         try {
             vector <string> words;
             split_str(cmd, ' ', words);
 
-            if (words[0] == TOPOLOGY_CMD) {
+            if (words[0] == TOPOLOGY_CMD)
                 graph = CreateTopology(words);
-            }
-            else if (words[0] == SHOW_CMD) {
-
+            else if (words[0] == SHOW_CMD)
                 showGraph(graph);
-            }
             else if (words[0] == MODIFY_CMD) {
 
             }
             else if (words[0] == REMOVE_CMD) {
 
             }
-            else if (words[0] == LSRP_CMD) {
+            else if (words[0] == LSRP_CMD)
                 executeLSRP(graph, words);
-            }
             else if (words[0] == DVRP_CMD) {
 
             }
-            else {
+            else if (words[0] == EXIT)
+                break;
+            else
                 cout << "Command Not Found!" << endl;
-            }
         }
         catch (string exeption) {
             cout << exeption << endl;

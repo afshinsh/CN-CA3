@@ -3,9 +3,12 @@
 #include <iostream>
 #include <vector>
 #include<string>  
+#include <algorithm>
+#include <chrono>
 #include <sstream>  
 
 
+using namespace std::chrono;
 using namespace std;
 
 const string TOPOLOGY_CMD = "topology";
@@ -324,8 +327,8 @@ void showGraph(vector<vector<int>> graph) {
 }
 vector<vector<int>> CreateTopology(vector<string> words) {
 
-    if (TopologyCreated)
-        throw string("topology already created!");
+    /*if (TopologyCreated)
+        throw string("topology already created!");*/
 
     vector<Edge> edges = ParseEdges(words);
     V = SetV(edges);
@@ -339,13 +342,23 @@ void executeLSRP(vector<vector<int>> graph, vector<string> words) {
 
     if (words.size() > 1)
         lsrp(graph, stoi(words[1]) - 1);
-    else
+    else {
+        auto start = high_resolution_clock::now();
+
         for (int i = 0; i < V; i++) {
             printf("\t --------------from src %d ---------------\n\n", i + 1);
             lsrp(graph, i);
             printf("------------------------------------------------------------------\n\n");
 
         }
+        auto stop = high_resolution_clock::now();
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        /*cout << "Time taken by function: "
+            << duration.count() << " microseconds" << endl;*/
+
+    }
+        
 
 }
 
